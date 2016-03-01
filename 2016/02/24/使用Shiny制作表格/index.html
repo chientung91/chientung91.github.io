@@ -3,17 +3,27 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Daily Record</title>
+  <title>使用Shiny制作表格 | Daily Record</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Daily Record">
-<meta property="og:url" content="http://yoursite.com/index.html">
+  <meta name="description" content="表格是工作和生活中常见的数据呈现方式，例如公司的很多报表就需要用到表格。当我们展示数据的时候，用户当然不希望只看到一个静态的页面，所以就需要一些简单的交互功能：排序、查找、筛选等等。
+基础的需求并不难实现，但当我们使用其他网页技术做这件事情的时候，既要做前端，也要做后端，代码量也不会少。对技术小白来说，使用 R Shiny 做这样的事情就很容易了。
+Shiny 是 R 社区里面一个非常出名的包，用">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用Shiny制作表格">
+<meta property="og:url" content="http://yoursite.com/2016/02/24/使用Shiny制作表格/index.html">
 <meta property="og:site_name" content="Daily Record">
-<meta property="og:description">
+<meta property="og:description" content="表格是工作和生活中常见的数据呈现方式，例如公司的很多报表就需要用到表格。当我们展示数据的时候，用户当然不希望只看到一个静态的页面，所以就需要一些简单的交互功能：排序、查找、筛选等等。
+基础的需求并不难实现，但当我们使用其他网页技术做这件事情的时候，既要做前端，也要做后端，代码量也不会少。对技术小白来说，使用 R Shiny 做这样的事情就很容易了。
+Shiny 是 R 社区里面一个非常出名的包，用">
+<meta property="og:image" content="https://ooo.0o0.ooo/2016/02/23/56cd342d78575.png">
+<meta property="og:image" content="https://ooo.0o0.ooo/2016/03/01/56d58ed2759bd.png">
+<meta property="og:image" content="https://ooo.0o0.ooo/2016/03/01/56d59230c2568.png">
+<meta property="og:updated_time" content="2016-03-01T13:12:46.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Daily Record">
-<meta name="twitter:description">
+<meta name="twitter:title" content="使用Shiny制作表格">
+<meta name="twitter:description" content="表格是工作和生活中常见的数据呈现方式，例如公司的很多报表就需要用到表格。当我们展示数据的时候，用户当然不希望只看到一个静态的页面，所以就需要一些简单的交互功能：排序、查找、筛选等等。
+基础的需求并不难实现，但当我们使用其他网页技术做这件事情的时候，既要做前端，也要做后端，代码量也不会少。对技术小白来说，使用 R Shiny 做这样的事情就很容易了。
+Shiny 是 R 社区里面一个非常出名的包，用">
   
     <link rel="alternative" href="/atom.xml" title="Daily Record" type="application/atom+xml">
   
@@ -59,9 +69,7 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main">
-  
-    <article id="post-使用Shiny制作表格" class="article article-type-post" itemscope itemprop="blogPost">
+        <section id="main"><article id="post-使用Shiny制作表格" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2016/02/24/使用Shiny制作表格/" class="article-date">
   <time datetime="2016-02-24T02:21:21.000Z" itemprop="datePublished">2016-02-24</time>
@@ -74,8 +82,8 @@
       <header class="article-header">
         
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/02/24/使用Shiny制作表格/">使用Shiny制作表格</a>
+    <h1 class="article-title" itemprop="name">
+      使用Shiny制作表格
     </h1>
   
 
@@ -137,56 +145,20 @@
     </footer>
   </div>
   
-</article>
-
-
+    
+<nav id="article-nav">
   
-    <article id="post-hello-world" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2015/10/30/hello-world/" class="article-date">
-  <time datetime="2015-10-30T07:43:30.000Z" itemprop="datePublished">2015-10-30</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2015/10/30/hello-world/">Hello World</a>
-    </h1>
+    <a href="/2015/10/30/hello-world/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Hello World</div>
+    </a>
   
+</nav>
 
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Welcome to <a href="http://hexo.io/" target="_blank" rel="external">Hexo</a>! This is your very first post. Check <a href="http://hexo.io/docs/" target="_blank" rel="external">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="http://hexo.io/docs/troubleshooting.html" target="_blank" rel="external">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="external">GitHub</a>.</p>
-<h2 id="Quick_Start">Quick Start</h2><h3 id="Create_a_new_post">Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
-<p>More info: <a href="http://hexo.io/docs/writing.html" target="_blank" rel="external">Writing</a></p>
-<h3 id="Run_server">Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="http://hexo.io/docs/server.html" target="_blank" rel="external">Server</a></p>
-<h3 id="Generate_static_files">Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="http://hexo.io/docs/generating.html" target="_blank" rel="external">Generating</a></p>
-<h3 id="Deploy_to_remote_sites">Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="http://hexo.io/docs/deployment.html" target="_blank" rel="external">Deployment</a></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2015/10/30/hello-world/" data-id="cil0cm3jb0000pxsyf2i7aul7" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
   
 </article>
 
-
-  
-  
 </section>
         
           <aside id="sidebar">
