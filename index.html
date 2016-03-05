@@ -74,12 +74,12 @@
 					<div class="tips-arrow"></div>
 					<ul class="tips-inner">
 						<li>菜单</li>
-						<li>标签</li>
+						<li>標籤</li>
 						
 						<li>友情链接</li>
 						
 						
-						<li>关于我</li>
+						<li>關於</li>
 						
 					</ul>
 				</div>
@@ -95,6 +95,8 @@
 							<li><a href="/">主页</a></li>
 				        
 							<li><a href="/archives">所有文章</a></li>
+				        
+							<li><a href="/tags/随笔">随笔</a></li>
 				        
 						</ul>
 					</nav>
@@ -114,7 +116,7 @@
 				
 				<section class="switch-part switch-part2">
 					<div class="widget tagcloud" id="js-tagcloud">
-						<a href="/tags/Shiny-DT/" style="font-size: 10px;">Shiny, DT</a>
+						<a href="/tags/Shiny-Server-R/" style="font-size: 10px;">Shiny Server, R</a> <a href="/tags/Shiny-DT/" style="font-size: 10px;">Shiny, DT</a>
 					</div>
 				</section>
 				
@@ -178,6 +180,8 @@
 		        
 					<li><a href="/archives">所有文章</a></li>
 		        
+					<li><a href="/tags/随笔">随笔</a></li>
+		        
 		        <div class="clearfix"></div>
 				</ul>
 			</nav>
@@ -197,6 +201,79 @@
 </nav>
 
       <div class="body-wrap">
+  
+    <article id="post-安装R-Shiny-Server" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2016/03/05/安装R-Shiny-Server/" class="article-date">
+  	<time datetime="2016-03-05T03:44:38.000Z" itemprop="datePublished">2016-03-05</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/03/05/安装R-Shiny-Server/">安装R Shiny Server</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>我们可以在本地用 <em>Shiny</em> 部署非常漂亮的应用，当我们需要把可视化的内容共享给别人时，就需要一台部署了 <em>Shiny Server</em> 的服务器。</p>
+<p>这时候我们有两种方案：</p>
+<ul>
+<li>Shiny Server</li>
+<li>Shinyapps.io</li>
+</ul>
+<p><em>Shinyapp.io</em> 是 <em>R Studio</em> 为 <em>Shiny</em> 进行网络部署而设计的。用户如果使用免费方案可以最多部署5个 <em>Shiny</em> 应用，各种方案的特点如下：</p>
+<p><img src="https://ooo.0o0.ooo/2016/03/04/56da6bd44d610.png" alt="屏幕快照 2016-03-05 下午1.14.16.png"></p>
+<p>不过如果手头上正好有一台可用的服务器时，我们就可以自己在服务器上部署好 <em>Shiny Server</em> 环境，呈现自己开发的 <em>Shiny</em> 了。</p>
+<p><em>R Studio</em> 提供了两种版本的 <em>Shiny Server</em> ：</p>
+<p><img src="https://ooo.0o0.ooo/2016/03/04/56da6dd52434a.png" alt="屏幕快照 2016-03-05 下午1.22.28.png"></p>
+<p>当然专业版还是要收费的，最基本的服务每年要9995刀，支持20个用户同时操作。</p>
+<p><em>Shiny Server</em> 的下载说明在<a href="https://www.rstudio.com/products/shiny/download-server/">这里</a>，目前 <em>Shiny Server</em> <strong>只支持</strong>64位的Linux服务器，所以大家在选购或者租服务器之后要注意安装正确的操作系统。</p>
+<p>以我用的 <em>Ubuntu 14</em> 为例：</p>
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Shiny-Server-R/">Shiny Server, R</a></li></ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a  href="/2016/03/05/安装R-Shiny-Server/#more">more >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
   
     <article id="post-使用Shiny制作表格" class="article article-type-post" itemscope itemprop="blogPost">
   
