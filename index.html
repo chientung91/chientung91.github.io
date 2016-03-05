@@ -228,10 +228,10 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="响应式编程（Reactive_Programming）">响应式编程（Reactive Programming）</h2><p>响应式编程是最近几年很火的一种编程范式，<a href="https://en.wikipedia.org/wiki/Reactive_programming" target="_blank" rel="external">wikipedia</a>对此有很多描述。这里只举一个例子体会一下它的特点：</p>
+        <h2 id="响应式编程（Reactive_Programming）">响应式编程（Reactive Programming）</h2><p>响应式编程是最近几年很火的一种编程范式，<a href="https://en.wikipedia.org/wiki/Reactive_programming">wikipedia</a>对此有很多描述。这里只举一个例子体会一下它的特点：</p>
 <p><code>a := b + c</code></p>
 <p>这条语句的意思是把变量<code>b</code>和变量<code>c</code>的和赋值给变量<code>a</code>。</p>
-<p>在<a href="https://en.wikipedia.org/wiki/Functional_programming" target="_blank" rel="external">函数式编程</a>中，随后如果改变<code>b</code>和<code>c</code>的值不会影响<code>a</code>的值；在响应式编程中，<code>a</code>的数值会始终受到<code>b</code>和<code>c</code>的影响，这个特点很像excel表里面的函数。</p>
+<p>在<a href="https://en.wikipedia.org/wiki/Functional_programming">函数式编程</a>中，随后如果改变<code>b</code>和<code>c</code>的值不会影响<code>a</code>的值；在响应式编程中，<code>a</code>的数值会始终受到<code>b</code>和<code>c</code>的影响，这个特点很像excel表里面的函数。</p>
 <h2 id="Shiny与响应式编程">Shiny与响应式编程</h2><p>在 <em>Shiny</em> 中，有3类响应式编程的对象：</p>
 <p><img src="https://ooo.0o0.ooo/2016/03/05/56da88e0109f1.png" alt="屏幕快照 2016-03-05 下午3.18.25.png"></p>
 <p><em>Shiny</em> 里面最简单的响应结构只包含一个 <em>Reactive source</em> 和一个 <em>Reactive endpoint</em></p>
@@ -243,46 +243,6 @@
   })
 })
 </code></pre><p>对应的响应式结构就是：</p>
-<p><img src="https://ooo.0o0.ooo/2016/03/05/56da89fa7bb4e.png" alt="屏幕快照 2016-03-05 下午3.23.02.png"></p>
-<p>下面是一个复杂一点的例子：</p>
-<pre><code>shinyServer(<span class="keyword">function</span>(input, output) {
-  output<span class="variable">$plotOut</span> &lt;- renderPlot({
-    hist(faithful<span class="variable">$eruptions</span>, breaks = as.numeric(input<span class="variable">$nBreaks</span>))
-    if (input<span class="variable">$individualObs</span>)
-      rug(faithful<span class="variable">$eruptions</span>)
-  })
-
-  output<span class="variable">$tableOut</span> &lt;- renderTable({
-    if (input<span class="variable">$individualObs</span>)
-      faithful
-    else
-      NULL
-  })
-})
-</code></pre><p>对应于这样的结构：</p>
-<p><img src="https://ooo.0o0.ooo/2016/03/05/56da8afb31b16.png" alt="屏幕快照 2016-03-05 下午3.27.22.png"></p>
-<p>实际应用中，我们经常会遇到一些很费计算资源的操作，就可以用 <em>Reactive conductors</em> 来进行封装，还是来个例子，直接上代码：</p>
-<pre><code>fib &lt;- <span class="keyword">function</span>(n) ifelse(n&lt;<span class="number">3</span>, <span class="number">1</span>, fib(n-<span class="number">1</span>)+fib(n-<span class="number">2</span>))
-
-shinyServer(<span class="keyword">function</span>(input, output) {
-  output<span class="variable">$nthValue</span>    &lt;- renderText({ fib(as.numeric(input<span class="variable">$n</span>)) })
-  output<span class="variable">$nthValueInv</span> &lt;- renderText({ <span class="number">1</span> / fib(as.numeric(input<span class="variable">$n</span>)) })
-})
-</code></pre><p>对应的结构是这样子的：</p>
-<p><img src="https://ooo.0o0.ooo/2016/03/05/56da8c7ea20c3.png" alt="屏幕快照 2016-03-05 下午3.33.51.png"></p>
-<p>这段代码使用了两次<code>fib</code>函数，如果我们引入 <em>Reactive conductors</em> 再来看一看的话：</p>
-<pre><code>fib &lt;- function<span class="list">(<span class="keyword">n</span>)</span> ifelse<span class="list">(<span class="keyword">n&lt;3</span>, <span class="number">1</span>, fib<span class="list">(<span class="keyword">n-1</span>)</span>+fib<span class="list">(<span class="keyword">n-2</span>)</span>)</span>
-
-shinyServer<span class="list">(<span class="keyword">function</span><span class="list">(<span class="keyword">input</span>, output)</span> {
-  currentFib         &lt;- reactive<span class="list">({ fib<span class="list">(<span class="keyword">as</span>.numeric<span class="list">(<span class="keyword">input</span>$n)</span>)</span> })</span>
-
-  output$nthValue    &lt;- renderText<span class="list">({ currentFib<span class="list">()</span> })</span>
-  output$nthValueInv &lt;- renderText<span class="list">({ <span class="number">1</span> / currentFib<span class="list">()</span> })</span>
-})</span>
-</code></pre><p>响应结构会变成这样：</p>
-<p><img src="https://ooo.0o0.ooo/2016/03/05/56da8d8b284ca.png" alt="屏幕快照 2016-03-05 下午3.37.57.png"></p>
-<p>这个例子里面， <em>Reactive conductors</em> 像一个缓存的中间变量，节约了接近一半的运算量。</p>
-
       
     </div>
     
@@ -295,6 +255,10 @@ shinyServer<span class="list">(<span class="keyword">function</span><span class=
 
       
 
+      
+        <p class="article-more-link">
+          <a  href="/2016/03/05/R-Shiny响应式编程/#more">more >></a>
+        </p>
       
       <div class="clearfix"></div>
     </div>
