@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  
+  
+    
+    <entry>
+      <title><![CDATA[R Shiny响应式编程]]></title>
+      <url>http://yoursite.com/2016/03/05/R-Shiny%E5%93%8D%E5%BA%94%E5%BC%8F%E7%BC%96%E7%A8%8B/</url>
+      <content type="html"><![CDATA[<h2 id="响应式编程（Reactive_Programming）">响应式编程（Reactive Programming）</h2><p>响应式编程是最近几年很火的一种编程范式，<a href="https://en.wikipedia.org/wiki/Reactive_programming" target="_blank" rel="external">wikipedia</a>对此有很多描述。这里只举一个例子体会一下它的特点：</p>
+<p><code>a := b + c</code></p>
+<p>这条语句的意思是把变量<code>b</code>和变量<code>c</code>的和赋值给变量<code>a</code>。</p>
+<p>在<a href="https://en.wikipedia.org/wiki/Functional_programming" target="_blank" rel="external">函数式编程</a>中，随后如果改变<code>b</code>和<code>c</code>的值不会影响<code>a</code>的值；在响应式编程中，<code>a</code>的数值会始终受到<code>b</code>和<code>c</code>的影响，这个特点很像excel表里面的函数。</p>
+<h2 id="Shiny与响应式编程">Shiny与响应式编程</h2><p>在 <em>Shiny</em> 中，有3类响应式编程的对象：</p>
+<p><img src="https://ooo.0o0.ooo/2016/03/05/56da88e0109f1.png" alt="屏幕快照 2016-03-05 下午3.18.25.png"></p>
+<p><em>Shiny</em> 里面最简单的响应结构只包含一个 <em>Reactive source</em> 和一个 <em>Reactive endpoint</em></p>
+<p><img src="https://ooo.0o0.ooo/2016/03/05/56da895c91ab7.png" alt="屏幕快照 2016-03-05 下午3.20.27.png"></p>
+<p>下面用一段代码展示一下这个结构：</p>
+<pre><code>shinyServer(<span class="keyword">function</span>(input, output) {
+  output<span class="variable">$distPlot</span> &lt;- renderPlot({
+    hist(rnorm(input<span class="variable">$obs</span>))
+  })
+})
+</code></pre><p>对应的响应式结构就是：</p>
+<a id="more"></a>
+<p><img src="https://ooo.0o0.ooo/2016/03/05/56da89fa7bb4e.png" alt="屏幕快照 2016-03-05 下午3.23.02.png"></p>
+<p>下面是一个复杂一点的例子：</p>
+<pre><code>shinyServer(<span class="keyword">function</span>(input, output) {
+  output<span class="variable">$plotOut</span> &lt;- renderPlot({
+    hist(faithful<span class="variable">$eruptions</span>, breaks = as.numeric(input<span class="variable">$nBreaks</span>))
+    if (input<span class="variable">$individualObs</span>)
+      rug(faithful<span class="variable">$eruptions</span>)
+  })
+
+  output<span class="variable">$tableOut</span> &lt;- renderTable({
+    if (input<span class="variable">$individualObs</span>)
+      faithful
+    else
+      NULL
+  })
+})
+</code></pre><p>对应于这样的结构：</p>
+<p><img src="https://ooo.0o0.ooo/2016/03/05/56da8afb31b16.png" alt="屏幕快照 2016-03-05 下午3.27.22.png"></p>
+<p>实际应用中，我们经常会遇到一些很费计算资源的操作，就可以用 <em>Reactive conductors</em> 来进行封装，还是来个例子，直接上代码：</p>
+<pre><code>fib &lt;- <span class="keyword">function</span>(n) ifelse(n&lt;<span class="number">3</span>, <span class="number">1</span>, fib(n-<span class="number">1</span>)+fib(n-<span class="number">2</span>))
+
+shinyServer(<span class="keyword">function</span>(input, output) {
+  output<span class="variable">$nthValue</span>    &lt;- renderText({ fib(as.numeric(input<span class="variable">$n</span>)) })
+  output<span class="variable">$nthValueInv</span> &lt;- renderText({ <span class="number">1</span> / fib(as.numeric(input<span class="variable">$n</span>)) })
+})
+</code></pre><p>对应的结构是这样子的：</p>
+<p><img src="https://ooo.0o0.ooo/2016/03/05/56da8c7ea20c3.png" alt="屏幕快照 2016-03-05 下午3.33.51.png"></p>
+<p>这段代码使用了两次<code>fib</code>函数，如果我们引入 <em>Reactive conductors</em> 再来看一看的话：</p>
+<pre><code>fib &lt;- function<span class="list">(<span class="keyword">n</span>)</span> ifelse<span class="list">(<span class="keyword">n&lt;3</span>, <span class="number">1</span>, fib<span class="list">(<span class="keyword">n-1</span>)</span>+fib<span class="list">(<span class="keyword">n-2</span>)</span>)</span>
+
+shinyServer<span class="list">(<span class="keyword">function</span><span class="list">(<span class="keyword">input</span>, output)</span> {
+  currentFib         &lt;- reactive<span class="list">({ fib<span class="list">(<span class="keyword">as</span>.numeric<span class="list">(<span class="keyword">input</span>$n)</span>)</span> })</span>
+
+  output$nthValue    &lt;- renderText<span class="list">({ currentFib<span class="list">()</span> })</span>
+  output$nthValueInv &lt;- renderText<span class="list">({ <span class="number">1</span> / currentFib<span class="list">()</span> })</span>
+})</span>
+</code></pre><p>响应结构会变成这样：</p>
+<p><img src="https://ooo.0o0.ooo/2016/03/05/56da8d8b284ca.png" alt="屏幕快照 2016-03-05 下午3.37.57.png"></p>
+<p>这个例子里面， <em>Reactive conductors</em> 像一个缓存的中间变量，节约了接近一半的运算量。</p>
+]]></content>
+    </entry>
+    
+    <entry>
+      <title><![CDATA[安装R Shiny Server]]></title>
+      <url>http://yoursite.com/2016/03/05/%E5%AE%89%E8%A3%85R-Shiny-Server/</url>
+      <content type="html"><![CDATA[<p>我们可以在本地用 <em>Shiny</em> 部署非常漂亮的应用，当我们需要把可视化的内容共享给别人时，就需要一台部署了 <em>Shiny Server</em> 的服务器。</p>
+<p>这时候我们有两种方案：</p>
+<ul>
+<li>Shiny Server</li>
+<li>Shinyapps.io</li>
+</ul>
+<p><em>Shinyapp.io</em> 是 <em>R Studio</em> 为 <em>Shiny</em> 进行网络部署而设计的。用户如果使用免费方案可以最多部署5个 <em>Shiny</em> 应用，各种方案的特点如下：</p>
+<p><img src="https://ooo.0o0.ooo/2016/03/04/56da6bd44d610.png" alt=""></p>
+<p>不过如果手头上正好有一台可用的服务器时，我们就可以自己在服务器上部署好 <em>Shiny Server</em> 环境，呈现自己开发的 <em>Shiny</em> 了。</p>
+<p><em>R Studio</em> 提供了两种版本的 <em>Shiny Server</em> ：</p>
+<p><img src="https://ooo.0o0.ooo/2016/03/04/56da6dd52434a.png" alt=""></p>
+<p>当然专业版还是要收费的，最基本的服务每年要9995刀，支持20个用户同时操作。</p>
+<p><em>Shiny Server</em> 的下载说明在<a href="https://www.rstudio.com/products/shiny/download-server/" target="_blank" rel="external">这里</a>，目前 <em>Shiny Server</em> <strong>只支持</strong>64位的Linux服务器，所以大家在选购或者租服务器之后要注意安装正确的操作系统。</p>
+<p>以我用的 <em>Ubuntu 14</em> 为例：</p>
+<a id="more"></a>
+<p>第一步是要在服务器上先安装好 <em>R</em> 和 <em>Shiny</em> ，首先要在<strong>/etc/apt/sources.list</strong>里添加 <em>CRAN</em> 的镜像链接，或者直接敲下面的命令之一：</p>
+<pre><code>deb <span class="symbol">https:</span>/<span class="regexp">/&lt;my.favorite.cran.mirror&gt;/bin</span><span class="regexp">/linux/ubuntu</span> wily/ 
+deb <span class="symbol">https:</span>/<span class="regexp">/&lt;my.favorite.cran.mirror&gt;/bin</span><span class="regexp">/linux/ubuntu</span> vivid/
+deb <span class="symbol">https:</span>/<span class="regexp">/&lt;my.favorite.cran.mirror&gt;/bin</span><span class="regexp">/linux/ubuntu</span> trusty/
+deb <span class="symbol">https:</span>/<span class="regexp">/&lt;my.favorite.cran.mirror&gt;/bin</span><span class="regexp">/linux/ubuntu</span> precise/
+</code></pre><p><strong>cran.mirror</strong>可以到<a href="https://cran.r-project.org/mirrors.html" target="_blank" rel="external">这里</a>挑选一个。</p>
+<p>然后就可以愉快的安装 <em>R</em> 了：</p>
+<pre><code>sudo apt-<span class="keyword">get</span> update
+sudo apt-<span class="keyword">get</span> install r-<span class="keyword">base</span>
+</code></pre><p>接着是 <em>Shiny</em> :</p>
+<pre><code><span class="char">$ </span>sudo su - \
+-c <span class="comment">"R -e \"</span>install.packages(<span class="string">'shiny'</span>, repos=<span class="string">'https://cran.rstudio.com/'</span>)\<span class="comment">""</span>
+</code></pre><p>第一步完成之后还没法直接安装 <em>Shiny Server</em> ，还要再折腾着安装一下 <em>gdebi</em> ，因为 <em>Shiny Server</em> 是用 <em>deb</em> 文件发布的:</p>
+<pre><code>sudo apt-get install gdebi-core
+$ wget https:<span class="comment">//download3.rstudio.org/ubuntu-12.04/x86_64/shiny-server-1.4.2.786-amd64.deb</span>
+$ sudo gdebi shiny-server-<span class="number">1.4</span><span class="number">.2</span><span class="number">.786</span>-amd64.deb
+</code></pre><p>注意这里<strong>12.04</strong>的意思并不是只适用于<strong>ubutntu 12.04</strong>版本，而是向下兼容。</p>
+<p>到此位置 <em>Shiny Server</em> 就安装好了，默认安装在<code>/opt/shiny-server/</code>，执行文件在<code>/opt/shiny-server/bin/shiny-server</code>，默认端口是<code>3838</code>。</p>
+<p>端口号可以通过路由器做端口映射或者修改 <em>Shiny Server</em> 的配置文件，比如我就改成了中国人特别喜欢的<code>8888</code>。好，下面看一下运行的效果。</p>
+<p><code>&lt;Your Server URL&gt;:8888</code>的呈现结果是：</p>
+<p><img src="https://ooo.0o0.ooo/2016/03/05/56da7cd81c4d6.png" alt=""></p>
+<p>我们可以在<code>/opt/shiny-server/samples</code>目录下为我们自己的应用建一个新的目录，比如<code>apps</code>，这个目录下既可以直接上传 <em>Shiny</em> 应用，也可以再新建目录作为子app，比如我的<code>&lt;Your Server URL&gt;:8888/apps/</code>的呈现结果是：</p>
+<p><img src="https://ooo.0o0.ooo/2016/03/05/56da7f41439ed.png" alt=""></p>
+<p>我在每个子目录下上传了写好的 ui.R 和 server.R 文件，比如打开最后一个 <em>3to6\</em>科学_ ：</p>
+<p><img src="https://ooo.0o0.ooo/2016/03/05/56da7fffe8cd4.png" alt=""></p>
+<p>最后就可以把这个表格的 URL 分享给别人。</p>
+]]></content>
+    </entry>
+    
+    <entry>
+      <title><![CDATA[使用Shiny制作表格]]></title>
+      <url>http://yoursite.com/2016/02/24/%E4%BD%BF%E7%94%A8Shiny%E5%88%B6%E4%BD%9C%E8%A1%A8%E6%A0%BC/</url>
+      <content type="html"><![CDATA[<p>表格是工作和生活中常见的数据呈现方式，例如公司的很多报表就需要用到表格。当我们展示数据的时候，用户当然不希望只看到一个静态的页面，所以就需要一些简单的交互功能：排序、查找、筛选等等。</p>
+<p>基础的需求并不难实现，但当我们使用其他网页技术做这件事情的时候，既要做前端，也要做后端，代码量也不会少。对技术小白来说，使用 <em>R Shiny</em> 做这样的事情就很容易了。</p>
+<p><em>Shiny</em> 是 <em>R</em> 社区里面一个非常出名的包，用来制作各类交互式网络应用，我们熟知的<strong>谢益辉</strong>就是其中的一位作者。</p>
+<p>先睹为快看看 <em>Shiny</em> 能做出什么样的效果：<br><img src="https://ooo.0o0.ooo/2016/02/23/56cd342d78575.png" alt="p1.png"></p>
+<p>可以看出来， <em>Shiny</em> 简直天生就是为了交互而存在的。</p>
+<a id="more"></a>
+<p><em>Shiny</em> 也提供了非常丰富的 <em>widgets</em> ，几乎覆盖了我们对 <em>UI</em> 的全部需求:</p>
+<p><img src="https://ooo.0o0.ooo/2016/03/01/56d58ed2759bd.png" alt="p2.png"></p>
+<p><em>DT</em> 也是谢老大写的包，是 <em>JavaScript DataTables</em> 库的R接口，R的数据对象可以直接通过 <em>DT</em> 呈现为HTML的表格。不仅如此， <em>DT</em> 本身还自动支持筛选、分页、排序等功能，非常的强大。</p>
+<p>一言以蔽之， <em>Shiny</em> + <em>DT</em> 是交互式呈现表格的非常好的一个方案。</p>
+<p>下面以我最近做的一个表格为例，最终效果是这样的：<br><img src="https://ooo.0o0.ooo/2016/03/01/56d59230c2568.png" alt="p3.png"></p>
+<p>数据来源于<a href="http://www.ifutureworks.com/" target="_blank" rel="external">这里</a>，爬下来就行。</p>
+<p>首先把爬下来的数据打包成一个数据框：<br>    myData&lt;-data.frame(…)</p>
+<p>记得load一下两个要用到的包：</p>
+<pre><code><span class="function"><span class="title">library</span><span class="params">(shiny)</span></span>
+<span class="function"><span class="title">library</span><span class="params">(DT)</span></span>
+</code></pre><p>UI端的代码：</p>
+<pre><code>shinyUI<span class="list">(
+  <span class="keyword">fluidPage</span><span class="list">(
+        <span class="keyword">titlePanel</span><span class="list">(<span class="string">"0~3岁婴儿/父母-婴幼儿启蒙教育"</span>)</span>,
+       downloadButton<span class="list">(<span class="quoted">'downloadData</span>', <span class="quoted">'Download</span>')</span>,
+
+    fluidRow<span class="list">(
+      <span class="keyword">DT</span>:<span class="keyword">:dataTableOutput</span><span class="list">(<span class="string">"table"</span>)</span>
+    )</span>
+    )</span>
+)</span>
+</code></pre><p>Server端的代码：</p>
+<pre><code>shinyServer<span class="list">(<span class="keyword">function</span><span class="list">(<span class="keyword">input</span>, output)</span> {
+
+      output$table &lt;- DT:<span class="keyword">:renderDataTable</span><span class="list">(<span class="keyword">DT</span>:<span class="keyword">:datatable</span><span class="list">({
+        myData
+    }, rownames = FALSE)</span>)</span>
+
+    output$downloadData &lt;- downloadHandler<span class="list">(
+        <span class="keyword">filename</span> = <span class="quoted">'file</span>.csv',
+        content = function<span class="list">(<span class="keyword">file</span>)</span> {
+               write.csv<span class="list">(<span class="keyword">table</span>, file)</span>
+            }
+      )</span>
+ })</span>
+</code></pre><p>我们可以对任何一列数据进行排序，也可以筛选或查找任何内容，非常的方便。</p>
+<p>最后只要把代码打包上传部署好 <em>Shiny Server</em> 的服务器就可以访问了 :)</p>
+]]></content>
+    </entry>
+    
+    <entry>
+      <title><![CDATA[Hello World]]></title>
+      <url>http://yoursite.com/2015/10/30/hello-world/</url>
+      <content type="html"><![CDATA[<p>Welcome to <a href="http://hexo.io/" target="_blank" rel="external">Hexo</a>! This is your very first post. Check <a href="http://hexo.io/docs/" target="_blank" rel="external">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="http://hexo.io/docs/troubleshooting.html" target="_blank" rel="external">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="external">GitHub</a>.</p>
+<h2 id="Quick_Start">Quick Start</h2><h3 id="Create_a_new_post">Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
+<p>More info: <a href="http://hexo.io/docs/writing.html" target="_blank" rel="external">Writing</a></p>
+<h3 id="Run_server">Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="http://hexo.io/docs/server.html" target="_blank" rel="external">Server</a></p>
+<h3 id="Generate_static_files">Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="http://hexo.io/docs/generating.html" target="_blank" rel="external">Generating</a></p>
+<h3 id="Deploy_to_remote_sites">Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="http://hexo.io/docs/deployment.html" target="_blank" rel="external">Deployment</a></p>
+]]></content>
+    </entry>
+    
+  
+  
+    
+  
+</search>
